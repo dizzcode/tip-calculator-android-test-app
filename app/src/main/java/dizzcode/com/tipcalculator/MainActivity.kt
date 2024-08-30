@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -57,8 +58,14 @@ fun TipCalculatorLayout(){
     var amountInput by remember {
         mutableStateOf("")
     }
+    var tipInput by remember {
+        mutableStateOf("")
+    }
+
     val amount = amountInput.toDoubleOrNull() ?: 0.0
-    val tip = calculateTip(amount, 15.0)
+    val tipPercent = tipInput.toDoubleOrNull() ?: 0.0
+
+    val tip = calculateTip(amount, tipPercent)
 
     Column(
         modifier = Modifier
@@ -76,6 +83,7 @@ fun TipCalculatorLayout(){
                 .align(Alignment.Start)
         )
         EditNumberField(
+            labelResId = R.string.bill_amount,
             value = amountInput,
             onValueChange = { userInput ->
                 amountInput = userInput
@@ -83,7 +91,17 @@ fun TipCalculatorLayout(){
             modifier = Modifier
                 .padding(bottom = 32.dp)
                 .fillMaxSize()
-            )
+        )
+        EditNumberField(
+            labelResId = R.string.how_was_the_service,
+            value = tipInput,
+            onValueChange = { userInput ->
+                tipInput = userInput
+            },
+            modifier = Modifier
+                .padding(bottom = 32.dp)
+                .fillMaxSize()
+        )
         Text(
             text = stringResource(id = R.string.tip_amount, tip),
             style = MaterialTheme.typography.displaySmall
@@ -94,6 +112,7 @@ fun TipCalculatorLayout(){
 
 @Composable
 fun EditNumberField(
+    @StringRes labelResId: Int,
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier
@@ -104,7 +123,7 @@ fun EditNumberField(
         value = value,
         onValueChange = onValueChange,
         label = {
-            Text( stringResource(id = R.string.bill_amount))
+            Text( text = stringResource(id = labelResId))
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         singleLine = true,
