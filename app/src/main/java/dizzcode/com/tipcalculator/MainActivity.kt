@@ -20,6 +20,12 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -61,7 +67,9 @@ fun TipCalculatorLayout(){
                 .padding(bottom = 16.dp, top = 40.dp)
                 .align(Alignment.Start)
         )
-        EditNumberField(modifier = Modifier.padding(bottom = 32.dp).fillMaxSize())
+        EditNumberField(modifier = Modifier
+            .padding(bottom = 32.dp)
+            .fillMaxSize())
         Text(
             text = stringResource(id = R.string.tip_amount, "$0.00"),
             style = MaterialTheme.typography.displaySmall
@@ -72,11 +80,15 @@ fun TipCalculatorLayout(){
 
 @Composable
 fun EditNumberField(modifier: Modifier = Modifier){
-    val amountInput = "0"
+    var amountInput by remember {
+        mutableStateOf("")
+    }
 
     TextField(
         value = amountInput,
-        onValueChange = {},
+        onValueChange = { userInput ->
+            amountInput = userInput
+            },
         modifier = modifier
     )
 }
