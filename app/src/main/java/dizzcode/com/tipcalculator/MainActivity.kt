@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -29,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dizzcode.com.tipcalculator.ui.theme.TipCalculatorTheme
@@ -52,6 +54,12 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun TipCalculatorLayout(){
+    var amountInput by remember {
+        mutableStateOf("")
+    }
+    val amount = amountInput.toDoubleOrNull() ?: 0.0
+    val tip = calculateTip(amount, 15.0)
+
     Column(
         modifier = Modifier
             .statusBarsPadding()
@@ -67,11 +75,17 @@ fun TipCalculatorLayout(){
                 .padding(bottom = 16.dp, top = 40.dp)
                 .align(Alignment.Start)
         )
-        EditNumberField(modifier = Modifier
-            .padding(bottom = 32.dp)
-            .fillMaxSize())
+        EditNumberField(
+            value = amountInput,
+            onValueChange = { userInput ->
+                amountInput = userInput
+            },
+            modifier = Modifier
+                .padding(bottom = 32.dp)
+                .fillMaxSize()
+            )
         Text(
-            text = stringResource(id = R.string.tip_amount, "$0.00"),
+            text = stringResource(id = R.string.tip_amount, tip),
             style = MaterialTheme.typography.displaySmall
         )
         Spacer(modifier = Modifier.height(150.dp))
@@ -79,16 +93,21 @@ fun TipCalculatorLayout(){
 }
 
 @Composable
-fun EditNumberField(modifier: Modifier = Modifier){
-    var amountInput by remember {
-        mutableStateOf("")
-    }
+fun EditNumberField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier
+){
+
 
     TextField(
-        value = amountInput,
-        onValueChange = { userInput ->
-            amountInput = userInput
-            },
+        value = value,
+        onValueChange = onValueChange,
+        label = {
+            Text( stringResource(id = R.string.bill_amount))
+        },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        singleLine = true,
         modifier = modifier
     )
 }
